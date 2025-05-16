@@ -2,7 +2,7 @@
 
 int main(){
 
-    int navio1[4] = {3, 3, 3}; // horizontal
+    int navio1[3] = {3, 3, 3}; // horizontal
     int navio2[3] = {3, 3, 3}; // vertical
     int navio3[3] = {3, 3, 3}; // diagonal esquerda
     int navio4[3] = {3, 3, 3}; // diagonal direita
