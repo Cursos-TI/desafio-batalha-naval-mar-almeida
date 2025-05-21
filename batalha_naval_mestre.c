@@ -12,51 +12,14 @@ int main(){
 
     char cabecalho[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'}; // declarando cabecalho
     int tabuleiro[LINHA][COLUNA] = {0}; // declarando matriz 10 x 10 com valores '0'
-    int cone[5][5] = {0};
-    int cruz[5][5] = {0};
-    int octaedro[5][5] = {0};
+    int cone[5][5] = {0}; // matriz 5x5 onde o cone é inserido
+    int cruz[5][5] = {0}; // matriz 5x5 onde a cruz é inserida
+    int octaedro[5][5] = {0}; // matriz 5x5 onde o octaedro é inserido
+    int foundCone = 0; // foundCone = 1 identifica que algum navio colidiu com o Cone
+    int foundCruz = 0; // foundCruz = 1 identifica que algum navio colidiu com a Cruz
+    int foundOcta = 0; // foundOcta = 1 identifica que algum navio colidiu com o Octaedro
 
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            if ((j >= 4 - i) && (j <= i)) 
-            // if ((j >= 2 - i) && (j <= i + 2)) // && (i != 3 && i != 4)) tbm da certo...
-            {
-            cone[i][j] = 1;
-            tabuleiro[i + 5][j + 1] = cone[i][j];
-            }
-        }
-    }
-
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            if ((j == 2) || (i == 2)) // associa na condição coluna = 2 OU na linha = 2
-            {
-            cruz[i][j] = 7;
-            tabuleiro[i + 4][j + 5] = cruz[i][j];
-            }
-        }
-    }
-
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            //if (((j == 2) || (i == 2)) || ((j == 1 && i == 1) || (j == 1 && i == 3) ||
-            //(j == 3 && i == 1) || (j == 3 && i == 3))) Também fuciona
-            if (((j >= 2 - i) && (j <= 2 + i)) && ((j >= i - 2) && (j <= 6 - i)))
-            // ((Triangulo superior) && (Triangulo inferior))
-            {
-                octaedro[i][j] = 3;
-                tabuleiro[i][j + 1] = octaedro[i][j];
-            }
-        }
-    }
-
-    /*
+    // posicionamento dos navios no tabuleiro 10x10
     for (int i = 0; i < 3; i++) // posicionamento horizontal navio1 no tabuleiro
     {
         tabuleiro[7][i + 1] = navio1[i];
@@ -65,8 +28,8 @@ int main(){
 
     for (int i = 0; i < 3; i++) // posicionamento vertical navio2 no tabuleiro
     {
-        tabuleiro[i + 1][7] = navio2[i];
-        //linha[i+1] = linha[1] a linha[3] (2. até 4.) / Coluna[7] = 8a coluna (H).
+        tabuleiro[i][8] = navio2[i];
+        //linha[i] = linha[0] a linha[2] (1. até 3.) / Coluna[8] = 9a coluna (I).
     }
 
     for (int i = 0; i < 3; i++) // posicionamento diagonal principal (esquerda) navio3 no tabuleiro
@@ -80,7 +43,66 @@ int main(){
         tabuleiro[i + 6][8 - i] = navio4[i];
         // linha[i+6] = linha[6] até linha[8] / Coluna[8-i] = coluna[8] (I) até coluna[6] (G).
     }
-    */
+
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            //if ((j >= 3 - i) && (j <= 1 + i) && (i >= 1) && (i <= 3)) // funciona, cone centralizado.
+            //if ((j >= 4 - i) && (j <= i)) // funciona, cone nao centralizado. 
+            if ((j >= 2 - i) && (j <= 2 + i) && (i < 3)) // cone do desafio.
+            {
+                if (tabuleiro[i + 6][j] == 3) // procura pelo valor 3 (navios) dentro da condicional
+                {
+                   tabuleiro[i + 6][j] = 5; // atribui valor 5 se há intersecção (dano)
+                   foundCone = 1; // pode usar outro if fora das condicionais para !foundCone
+                } else {
+                    cone[i][j] = 1; // cone formado de numeros '1'
+                    tabuleiro[i + 6][j] = cone[i][j];
+                }
+            }
+        }
+        
+    }
+   
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            if ((j == 2) || (i == 2)) // associa na condição coluna = 2 OU na linha = 2
+            {
+                if (tabuleiro[i + 4][j + 5] == 3) // procura pelo valor 3 (navios) dentro da condicional
+                {
+                    tabuleiro[i + 4][j + 5] = 5; // atribui valor 5 se há intersecção (dano)
+                    foundCruz = 1; // pode usar outro if fora das condicionais para !foundCruz
+                } else {
+                    cruz[i][j] = 1; // cruz formada de numeros '1'
+                    tabuleiro[i + 4][j + 5] = cruz[i][j];
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            /* if (((j == 2) || (i == 2)) || ((j == 1 && i == 1) || (j == 1 && i == 3) ||
+            (j == 3 && i == 1) || (j == 3 && i == 3))) Também fuciona */
+            if (((j >= 2 - i) && (j <= 2 + i)) && ((j >= i - 2) && (j <= 6 - i)))
+            // ((Triangulo superior) && (Triangulo inferior))
+            {
+                if (tabuleiro[i][j + 1] == 3) // procura pelo valor 3 (navios) dentro da condicional
+                {
+                    tabuleiro[i][j + 1] = 5; // atribui valor 5 se há intersecção (dano)
+                    foundOcta = 1; // pode usar outro if fora das condicionais para !foundOcta
+                } else {
+                    octaedro[i][j] = 1; // octaedro formado de numeros '1'
+                    tabuleiro[i][j + 1] = octaedro[i][j];
+                }
+            }
+        }
+    }
 
     printf("*****BATALHA NAVAL MESTRE*****\n");
     printf("------------------------------\n");
